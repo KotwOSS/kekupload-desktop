@@ -63,7 +63,7 @@ jobs:
       with:
         toolchain: stable
 
-    - name: Install cargo-hakari
+    - name: Install tauri-cli
       uses: baptiste0928/cargo-install@v1
       with:
         crate: tauri-cli

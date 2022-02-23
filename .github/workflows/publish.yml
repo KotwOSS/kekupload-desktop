@@ -36,15 +36,13 @@ jobs:
           platform: [macos-latest, ubuntu-latest, windows-latest]
           include:
           - os: ubuntu-latest
-            artifact_name: target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage
-                         | target/release/bundle/deb/uploaddesktop_0.1.0_amd64.deb
+            artifact_name: "target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage|target/release/bundle/deb/uploaddesktop_0.1.0_amd64.deb"
                          
           - os: windows-latest
-            artifact_name: target/release/bundle/exe/uploaddesktop_0.1.0_x64.exe
+            artifact_name: "target/release/bundle/exe/uploaddesktop_0.1.0_x64.exe"
             
           - os: macos-latest
-            artifact_name: target/release/bundle/macos/uploaddesktop.app
-                         | target/release/bundle/dmg/uploaddesktop_0.1.0_x64.dmg
+            artifact_name: "target/release/bundle/macos/uploaddesktop.app|target/release/bundle/dmg/uploaddesktop_0.1.0_x64.dmg"
 
     runs-on: ${{ matrix.platform }}
 
@@ -91,7 +89,7 @@ jobs:
         
         file: ${{ matrix.artifact_name }}
         
-        file-glob: true
+        file_glob: true
         
         prerelease: true
         release_name: "build:${{ needs.prepare.outputs.COMMIT }}"

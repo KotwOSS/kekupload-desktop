@@ -10,10 +10,11 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  createRelease:
+  prepare:
     runs-on: ubuntu-latest
     outputs:
-      RELEASE_UPLOAD_ID: ${{ steps.create_release.outputs.id }}
+      BUILD_ID: ${{ steps.buildnumber.outputs.build_number }}
+      COMMIT: ${{ steps.vars.outputs.sha_short }}
 
     steps:
       - uses: actions/checkout@v2
@@ -26,29 +27,28 @@ jobs:
         id: buildnumber
         uses: einaregilsson/build-number@v3 
         with:
-          token: ${{secrets.github_token}}
-
-      - name: create release
-        id: create_release
-        uses: actions/create-release@v1.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name:  "build_${{ steps.buildnumber.outputs.build_number }}"
-          release_name: "build:${{ steps.vars.outputs.sha_short }}"
-          body: "See the assets to download this version and install."
-          draft: true
-          prerelease: true
+          token: ${{ secrets.github_token }}
           
   buildMatrix:
     strategy:
         fail-fast: false
         matrix:
           platform: [macos-latest, ubuntu-latest, windows-latest]
+          include:
+          - os: ubuntu-latest
+            artifact_name: target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage
+                         | target/release/bundle/deb/uploaddesktop_0.1.0_amd64.deb
+                         
+          - os: windows-latest
+            artifact_name: target/release/bundle/exe/uploaddesktop_0.1.0_x64.exe
+            
+          - os: macos-latest
+            artifact_name: target/release/bundle/macos/uploaddesktop.app
+                         | target/release/bundle/dmg/uploaddesktop_0.1.0_x64.dmg
 
     runs-on: ${{ matrix.platform }}
 
-    needs: createRelease
+    needs: prepare
 
     steps:
     - uses: actions/checkout@v2
@@ -75,14 +75,24 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y webkit2gtk-4.0
         
-    - name: install app dependencies and build it
-      run: cd frontend; yarn && yarn build
+    - name: install app dependencies
+      run: cd frontend; yarn
       
-    - uses: loloof64/tauri-action@marketplace_2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build
+      run: cargo tauri build
+    
+    - name: Upload binaries to release (ubuntu)
+      if: matrix.platform == 'ubuntu-latest'
+      uses: svenstaro/upload-release-action@v2
       with:
-        releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
-        npmScript: frontend/package.json
-        distPath: frontend
-        projectPath: .
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        
+        file: ${{ matrix.artifact_name }}
+        
+        file-glob: true
+        
+        prerelease: true
+        release_name: "build:${{ needs.prepare.outputs.COMMIT }}"
+        tag: "build_${{ needs.prepare.outputs.BUILD_ID }}"
+        overwrite: true
+        body: "This is a prerelease" 

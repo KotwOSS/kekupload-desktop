@@ -63,8 +63,10 @@ jobs:
       with:
         toolchain: stable
         
-    - name: install tauri bundler
-      run: cargo install tauri-bundler --force
+    - uses: actions-rs/install@v0.1
+      with:
+        crate: tauri-cli
+        version: ^1.0.0-rc
       
     - name: install webkit2gtk (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
@@ -75,7 +77,4 @@ jobs:
     - name: install app dependencies and build it
       run: cd frontend; yarn && yarn build
       
-    - name: tauri-action
-      uses: loloof64/tauri-action@marketplace_2
-      with:
-        releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
+    - run: cargo tauri build

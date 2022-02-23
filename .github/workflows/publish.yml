@@ -1,4 +1,4 @@
-name: Rust
+name: Publish
 
 on:
   push:
@@ -84,3 +84,5 @@ jobs:
       with:
         releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}
         npmScript: frontend/package.json
+        distPath: frontend
+        projectPath: .

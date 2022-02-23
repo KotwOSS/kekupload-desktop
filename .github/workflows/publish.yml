@@ -64,6 +64,8 @@ jobs:
 
     - name: Install rust cache
       uses: Swatinem/rust-cache@v1
+      with:
+        cache-on-failure: true
 
     - name: Install tauri-cli
       uses: baptiste0928/cargo-install@v1

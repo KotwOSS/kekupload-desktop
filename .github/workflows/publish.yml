@@ -84,8 +84,7 @@ jobs:
     - name: Build
       run: cargo tauri build
     
-    - name: Upload binaries to release (ubuntu)
-      if: matrix.platform == 'ubuntu-latest'
+    - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}

@@ -78,4 +78,8 @@ jobs:
     - name: install app dependencies and build it
       run: cd frontend; yarn && yarn build
       
-    - run: cargo tauri build
+    - uses: tauri-apps/tauri-action@v0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        releaseId: ${{ needs.create-release.outputs.RELEASE_UPLOAD_ID }}

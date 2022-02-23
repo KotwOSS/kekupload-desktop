@@ -78,7 +78,7 @@ jobs:
     - name: install app dependencies and build it
       run: cd frontend; yarn && yarn build
       
-    - uses: tauri-apps/tauri-action@v0
+    - uses: loloof64/tauri-action@marketplace_2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:

@@ -38,13 +38,13 @@ jobs:
         matrix:
           include:
           - os: ubuntu-latest
-            artifact_name: "target/release/bundle/(appimage/uploaddesktop_0.1.0_amd64.AppImage|deb/uploaddesktop_0.1.0_amd64.deb)"
+            artifact_name: "target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage;target/release/deb/uploaddesktop_0.1.0_amd64.deb)"
                          
           - os: windows-latest
-            artifact_name: "(target/release/bundle/msi/uploaddesktop_0.1.0_x64_en-US.msi)"
+            artifact_name: "target/release/bundle/msi/uploaddesktop_0.1.0_x64_en-US.msi"
             
           - os: macos-latest
-            artifact_name: "target/release/bundle/(macos/uploaddesktop.app|dmg/uploaddesktop_0.1.0_x64.dmg)"
+            artifact_name: "target/release/bundle/macos/uploaddesktop.app;target/release/dmg/uploaddesktop_0.1.0_x64.dmg"
 
     needs: prepare
 
@@ -84,16 +84,15 @@ jobs:
       run: cargo tauri build
     
     - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+      uses: xresloader/upload-to-github-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        
         file: ${{ matrix.artifact_name }}
-        
-        file_glob: true
-        
+
+        draft: true
         prerelease: true
         release_name: "build:${{ needs.prepare.outputs.COMMIT }}"
-        tag: "build_${{ needs.prepare.outputs.BUILD_ID }}"
+        tag_name: "build_${{ needs.prepare.outputs.BUILD_ID }}"
+        
         overwrite: true
-        body: "This is a prerelease" 

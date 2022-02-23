@@ -67,6 +67,7 @@ jobs:
       with:
         crate: tauri-cli
         version: ^1.0.0-rc
+        use-tool-cache: true
       
     - name: install webkit2gtk (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'

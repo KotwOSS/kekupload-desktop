@@ -30,6 +30,9 @@ jobs:
           token: ${{ secrets.github_token }}
           
   buildMatrix:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+  
     strategy:
         fail-fast: false
         matrix:
@@ -42,8 +45,6 @@ jobs:
             
           - os: macos-latest
             artifact_name: "target/release/bundle/(macos/uploaddesktop.app|dmg/uploaddesktop_0.1.0_x64.dmg)"
-
-    runs-on: ${{ matrix.platform }}
 
     needs: prepare
 

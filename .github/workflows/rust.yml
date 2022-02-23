@@ -62,13 +62,13 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-        
-    - uses: actions-rs/install@v0.1
+
+    - name: Install cargo-hakari
+      uses: baptiste0928/cargo-install@v1
       with:
         crate: tauri-cli
-        version: ^1.0.0-rc
-        use-tool-cache: true
-      
+        version: "^1.0.0-rc"
+        
     - name: install webkit2gtk (ubuntu only)
       if: matrix.platform == 'ubuntu-latest'
       run: |

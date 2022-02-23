@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name:  "build_${{ steps.buildnumber.outputs.build_number }}"
-          release_name: ${{ steps.vars.outputs.sha_short }}
+          release_name: "build:${{ steps.vars.outputs.sha_short }}"
           body: "See the assets to download this version and install."
           draft: true
           prerelease: true

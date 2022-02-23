@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      
       - name: Generate build number
         id: buildnumber
         uses: einaregilsson/build-number@v3 

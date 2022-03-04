@@ -92,7 +92,7 @@ jobs:
       run: cargo tauri build
 
     - name: Pipe files to release
-      uses: KotwOSS/pipe-to-release@v1
+      uses: KotwOSS/pipe-to-release@2.0.1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 

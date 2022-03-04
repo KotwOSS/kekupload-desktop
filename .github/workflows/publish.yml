@@ -41,7 +41,7 @@ jobs:
           - os: ubuntu-latest
             filemap: |
               target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage>uploaddesktop_0.1.0_amd64.AppImage
-              target/release/deb/uploaddesktop_0.1.0_amd64.deb>uploaddesktop_0.1.0_amd64.deb
+              target/release/bundle/deb/uploaddesktop_0.1.0_amd64.deb>uploaddesktop_0.1.0_amd64.deb
                          
           - os: windows-latest
             filemap: |
@@ -49,8 +49,7 @@ jobs:
             
           - os: macos-latest
             filemap: |
-              target/release/bundle/macos/uploaddesktop.app>uploaddesktop.app
-              target/release/dmg/uploaddesktop_0.1.0_x64.dmg>uploaddesktop_0.1.0_x64.dmg
+              target/release/bundle/dmg/uploaddesktop_0.1.0_x64.dmg>uploaddesktop_0.1.0_x64.dmg
 
     needs: prepare
 
@@ -92,7 +91,7 @@ jobs:
       run: cargo tauri build
 
     - name: Pipe files to release
-      uses: KotwOSS/pipe-to-release@2.0.1
+      uses: KotwOSS/pipe-to-release@2.0.2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 

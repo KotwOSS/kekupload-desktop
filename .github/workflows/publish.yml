@@ -8,19 +8,19 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-
+  
 jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
       BUILD_ID: ${{ steps.buildnumber.outputs.build_number }}
-      COMMIT: ${{ steps.vars.outputs.sha_short }}
+      SHA_SHORT: ${{ steps.commithash.outputs.sha_short }}
 
     steps:
       - uses: actions/checkout@v2
       
       - name: Set outputs
-        id: vars
+        id: commithash
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       
       - name: Generate build number
@@ -29,6 +29,7 @@ jobs:
         with:
           token: ${{ secrets.github_token }}
           
+
   buildMatrix:
     name: Publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -38,13 +39,18 @@ jobs:
         matrix:
           include:
           - os: ubuntu-latest
-            artifact_name: "target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage;target/release/deb/uploaddesktop_0.1.0_amd64.deb)"
+            filemap: |
+              target/release/bundle/appimage/uploaddesktop_0.1.0_amd64.AppImage>uploaddesktop_0.1.0_amd64.AppImage
+              target/release/deb/uploaddesktop_0.1.0_amd64.deb>uploaddesktop_0.1.0_amd64.deb
                          
           - os: windows-latest
-            artifact_name: "target/release/bundle/msi/uploaddesktop_0.1.0_x64_en-US.msi"
+            filemap: |
+              target/release/bundle/msi/uploaddesktop_0.1.0_x64_en-US.msi>uploaddesktop_0.1.0_x64_en-US.msi
             
           - os: macos-latest
-            artifact_name: "target/release/bundle/macos/uploaddesktop.app;target/release/dmg/uploaddesktop_0.1.0_x64.dmg"
+            filemap: |
+              target/release/bundle/macos/uploaddesktop.app>uploaddesktop.app
+              target/release/dmg/uploaddesktop_0.1.0_x64.dmg>uploaddesktop_0.1.0_x64.dmg
 
     needs: prepare
 
@@ -84,17 +90,19 @@ jobs:
       
     - name: Build
       run: cargo tauri build
-    
-    - name: Upload binaries to release
-      uses: xresloader/upload-to-github-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Pipe files to release
+      uses: KotwOSS/pipe-to-release@v1
       with:
-        file: ${{ matrix.artifact_name }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+        filemap: ${{ matrix.filemap }}
+
+        skip_errors: true
 
         draft: true
         prerelease: true
-        release_name: "build:${{ needs.prepare.outputs.COMMIT }}"
-        tag_name: "build_${{ needs.prepare.outputs.BUILD_ID }}"
-        
-        overwrite: true
+
+        tag: "build_${{ needs.prepare.outputs.BUILD_ID }}"
+        release_name: "build:${{ needs.prepare.outputs.SHA_SHORT }}"
+        release_body: "This is an automated build"

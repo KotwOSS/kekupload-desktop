@@ -32,7 +32,7 @@ jobs:
           
       - name: Create a release
         id: release
-        uses: KotwOSS/pipe-to-release@<version>
+        uses: KotwOSS/pipe-to-release@2.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -107,7 +107,7 @@ jobs:
       run: cargo tauri build
 
     - name: Pipe files to release
-      uses: KotwOSS/pipe-to-release@<version>
+      uses: KotwOSS/pipe-to-release@2.0.3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
